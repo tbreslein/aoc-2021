@@ -7,7 +7,13 @@ pub fn solve_p1(data: &str) -> i32 {
     data.lines()
         .collect::<Vec<&str>>()
         .windows(2)
-        .fold(0, |acc, x| if x[1] > x[0] { acc + 1 } else { acc })
+        .fold(0, |acc, x| {
+            if x[1].parse::<i32>().unwrap_or(0) > x[0].parse::<i32>().unwrap_or(0) {
+                acc + 1
+            } else {
+                acc
+            }
+        })
 }
 
 pub fn solve_p2(data: &str) -> i32 {
@@ -15,7 +21,7 @@ pub fn solve_p2(data: &str) -> i32 {
         .collect::<Vec<&str>>()
         .windows(3)
         .fold((0, std::i32::MAX), |acc, x| {
-            let xsum = x.iter().map(|y| y.parse::<i32>().unwrap()).sum();
+            let xsum = x.iter().map(|y| y.parse::<i32>().unwrap_or(0)).sum();
             if xsum > acc.1 {
                 (acc.0 + 1, xsum)
             } else {
