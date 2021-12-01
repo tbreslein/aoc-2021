@@ -1,8 +1,3 @@
-// NOTE: For some reason, when running this function with the
-// challenge input, the result is off by one. I get 1153 but should
-// have gotten 1154... I have no idea why, especially considering
-// that solve_p2 just works, and the way I solved that is pretty
-// similar.
 pub fn solve_p1(data: &str) -> i32 {
     data.lines()
         .collect::<Vec<&str>>()
