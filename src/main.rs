@@ -19,11 +19,14 @@ fn main() {
     println!("Value for part: {}", opts.part);
 
     match opts.day {
-        1 => {match opts.part {
+        1 => match opts.part {
             1 => println!("Day 1, part 1!"),
             2 => println!("Day 1, part 2!"),
-            _ => println!("You chose part {}, but there only 2 parts per day!", opts.part),
-        }},
+            _ => println!(
+                "You chose part {}, but there only 2 parts per day!",
+                opts.part
+            ),
+        },
         _ => println!("Have not finished day {} (yet)...", opts.day),
     };
 }
