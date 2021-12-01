@@ -1,8 +1,12 @@
-use clap::Parser;
+mod common;
+mod solutions;
 
-/// Oh, hi...
+use clap::Parser;
+use std::error::Error;
+
+/// Run the Advent of Code 2021 challenges
 #[derive(Parser)]
-#[clap(version = "0.0.1", author = "tommyb")]
+#[clap(version = "0.0.1", author = "Author: github.com/tbreslein")]
 struct Opts {
     /// which day of the AoC you wanna run; valid values: {1, 2, ..}
     #[clap(short, long)]
@@ -11,22 +15,13 @@ struct Opts {
     /// which part of that day you wanna run; valid values: {1, 2}
     #[clap(short, long)]
     part: i32,
+
+    /// file containing the data relevant to the challenge
+    file: String,
 }
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let opts: Opts = Opts::parse();
-    println!("Value for day: {}", opts.day);
-    println!("Value for part: {}", opts.part);
-
-    match opts.day {
-        1 => match opts.part {
-            1 => println!("Day 1, part 1!"),
-            2 => println!("Day 1, part 2!"),
-            _ => println!(
-                "You chose part {}, but there only 2 parts per day!",
-                opts.part
-            ),
-        },
-        _ => println!("Have not finished day {} (yet)...", opts.day),
-    };
+    common::pick_challenge::pick_challenge(opts.day, opts.part, opts.file)?;
+    Ok(())
 }
