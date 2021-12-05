@@ -42,6 +42,7 @@ impl Line {
         }
     }
 
+    // not a particularly fitting name, to be fair...
     fn get_y_index(&self, i: i32) -> usize {
         (if self.begin.y == self.end.y {
             self.begin.y
