@@ -56,7 +56,7 @@ fn precompute(fishy_timer: i32, days: i32) -> u64 {
 // - if so, this fish spawns 1 + (d' - 8) // 7
 //
 // or as pseudo code with d' being the remaining days after spawning this fish:
-// new_fishies = max(0, d' - 8) + (d' - 8) // 7 : 0
+// new_fishies = max(0, d' - 8) + max(0, d' - 8) // 7
 //
 // Now we get to recurse. Each of those new fishies will have d'' = d'-8 days
 // left, so they each will spawn d'' > 7 ? 1 + (d'' - 8) // 7 : 0 new fishies.
@@ -64,6 +64,8 @@ fn precompute(fishy_timer: i32, days: i32) -> u64 {
 // This where we get the exponential growth, because as long as we have more
 // than 8 days left, we get another recursion, so the full number of recursion
 // cycles is d // 8... but what do we do with that now? <.<
+// Is it the initial formula to the power of (d // 8)! ? (! meaning the
+// factorial)
 fn solve(data: &str, days: i32) -> u64 {
     // let precomputations = [
     //     precompute(1, days),
