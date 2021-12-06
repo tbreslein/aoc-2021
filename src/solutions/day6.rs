@@ -27,10 +27,7 @@ fn precompute(fishy_timer: i32, days: i32) -> u64 {
     //         school
     //     })
     //     .len() as u64
-    let dprime = days + (8 - fishy_timer);
-    let new_fishies =
-        (cmp::max(0, dprime - 8) + cmp::max(0, dprime - 8) / 7).pow((dprime / 8) as u32);
-    new_fishies as u64
+    0
 }
 
 // The trick here is that brute forcing this problem is very computionally
@@ -66,21 +63,21 @@ fn precompute(fishy_timer: i32, days: i32) -> u64 {
 //
 // This where we get the exponential growth, because as long as we have more
 // than 8 days left, we get another recursion, so the full number of recursion
-// cycles is d // 8.
+// cycles is d // 8... but what do we do with that now? <.<
 fn solve(data: &str, days: i32) -> u64 {
-    let precomputations = [
-        precompute(1, days),
-        precompute(2, days),
-        precompute(3, days),
-        precompute(4, days),
-        precompute(5, days),
-    ];
-    parse_input(data)
-        .iter()
-        .fold(0_u64, |final_fishy_count, init_fishy| {
-            final_fishy_count + precomputations[(*init_fishy as i32 - 1) as usize]
-        })
-    // 0
+    // let precomputations = [
+    //     precompute(1, days),
+    //     precompute(2, days),
+    //     precompute(3, days),
+    //     precompute(4, days),
+    //     precompute(5, days),
+    // ];
+    // parse_input(data)
+    //     .iter()
+    //     .fold(0_u64, |final_fishy_count, init_fishy| {
+    //         final_fishy_count + precomputations[(*init_fishy as i32 - 1) as usize]
+    //     })
+    0
 }
 
 pub fn solve_p1(data: &str) -> u64 {
