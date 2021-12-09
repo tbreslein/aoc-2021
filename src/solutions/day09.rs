@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 type HeightMap = Vec<Vec<u32>>;
 type Coords = (usize, usize);
 
@@ -40,8 +42,57 @@ pub fn solve_p1(data: &str) -> u32 {
     calc_risk_level_sum(&heightmap, &find_low_points(&heightmap))
 }
 
-pub fn solve_p2(_data: &str) -> i32 {
-    0
+fn fill_basin_set(map: &HeightMap, point: &Coords, basin_set: &mut HashSet<Coords>) -> () {
+    basin_set.insert(point.clone());
+    // check up and recurse
+    if point.0 > 0 && !basin_set.contains(&(point.0 - 1, point.1)) && map[point.0 - 1][point.1] < 9
+    {
+        fill_basin_set(&map, &(point.0 - 1, point.1), basin_set);
+    }
+
+    // check down and recurse
+    if point.0 < map.len() - 1
+        && !basin_set.contains(&(point.0 + 1, point.1))
+        && map[point.0 + 1][point.1] < 9
+    {
+        fill_basin_set(&map, &(point.0 + 1, point.1), basin_set);
+    }
+
+    // check left and recurse
+    if point.1 > 0 && !basin_set.contains(&(point.0, point.1 - 1)) && map[point.0][point.1 - 1] < 9
+    {
+        fill_basin_set(&map, &(point.0, point.1 - 1), basin_set);
+    }
+
+    // check right and recurse
+    if point.1 < map[0].len() - 1
+        && !basin_set.contains(&(point.0, point.1 + 1))
+        && map[point.0][point.1 + 1] < 9
+    {
+        fill_basin_set(&map, &(point.0, point.1 + 1), basin_set);
+    }
+}
+
+fn calc_basin_sizes(map: &HeightMap, low_points: &Vec<Coords>) -> Vec<usize> {
+    let mut basin_sizes = low_points
+        .iter()
+        .fold(Vec::new(), |mut basin_sizes, point| {
+            let mut basin_set: HashSet<Coords> = HashSet::new();
+            fill_basin_set(&map, &point, &mut basin_set);
+            basin_sizes.push(basin_set.len());
+            basin_sizes
+        });
+    basin_sizes.sort();
+    basin_sizes
+}
+
+pub fn solve_p2(data: &str) -> usize {
+    let heightmap = parse_input(data);
+    calc_basin_sizes(&heightmap, &find_low_points(&heightmap))
+        .iter()
+        .rev()
+        .take(3)
+        .product()
 }
 
 #[cfg(test)]
