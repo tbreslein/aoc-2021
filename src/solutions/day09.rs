@@ -3,6 +3,10 @@ use std::collections::HashSet;
 type HeightMap = Vec<Vec<u32>>;
 type Coords = (usize, usize);
 
+/*
+ * used by p1 and p2
+ */
+
 fn parse_input(data: &str) -> HeightMap {
     data.lines()
         .map(|line| {
@@ -31,6 +35,10 @@ fn find_low_points(map: &HeightMap) -> Vec<Coords> {
         })
 }
 
+/*
+ * p1 only
+ */
+
 fn calc_risk_level_sum(map: &HeightMap, low_points: &Vec<Coords>) -> u32 {
     low_points
         .iter()
@@ -41,6 +49,10 @@ pub fn solve_p1(data: &str) -> u32 {
     let heightmap = parse_input(data);
     calc_risk_level_sum(&heightmap, &find_low_points(&heightmap))
 }
+
+/*
+ * p2 only
+ */
 
 fn fill_basin_set(map: &HeightMap, point: &Coords, basin_set: &mut HashSet<Coords>) -> () {
     basin_set.insert(point.clone());
