@@ -58,6 +58,7 @@ fn calc_output_value(signal: &Vec<&str>, _output: &Vec<&str>) -> i32 {
 }
 
 pub fn solve_p2(data: &str) -> i32 {
+    println!("NO IMPLENTED YET!");
     parse_input(data).iter().fold(0, |output_sum, line_tuple| {
         output_sum + calc_output_value(&line_tuple.0, &line_tuple.1)
     })
