@@ -3,6 +3,20 @@ use std::collections::HashSet;
 type HeightMap = Vec<Vec<u32>>;
 type Coords = (usize, usize);
 
+pub fn solve_p1(data: &str) -> u32 {
+    let heightmap = parse_input(data);
+    calc_risk_level_sum(&heightmap, &find_low_points(&heightmap))
+}
+
+pub fn solve_p2(data: &str) -> usize {
+    let heightmap = parse_input(data);
+    calc_basin_sizes(&heightmap, &find_low_points(&heightmap))
+        .iter()
+        .rev()
+        .take(3)
+        .product()
+}
+
 /*
  * used by p1 and p2
  */
@@ -45,14 +59,22 @@ fn calc_risk_level_sum(map: &HeightMap, low_points: &Vec<Coords>) -> u32 {
         .fold(0, |current_sum, (y, x)| current_sum + map[*y][*x] + 1)
 }
 
-pub fn solve_p1(data: &str) -> u32 {
-    let heightmap = parse_input(data);
-    calc_risk_level_sum(&heightmap, &find_low_points(&heightmap))
-}
-
 /*
  * p2 only
  */
+
+fn calc_basin_sizes(map: &HeightMap, low_points: &Vec<Coords>) -> Vec<usize> {
+    let mut basin_sizes = low_points
+        .iter()
+        .fold(Vec::new(), |mut basin_sizes, point| {
+            let mut basin_set: HashSet<Coords> = HashSet::new();
+            fill_basin_set(&map, &point, &mut basin_set);
+            basin_sizes.push(basin_set.len());
+            basin_sizes
+        });
+    basin_sizes.sort();
+    basin_sizes
+}
 
 fn fill_basin_set(map: &HeightMap, point: &Coords, basin_set: &mut HashSet<Coords>) -> () {
     basin_set.insert(point.clone());
@@ -83,28 +105,6 @@ fn fill_basin_set(map: &HeightMap, point: &Coords, basin_set: &mut HashSet<Coord
     {
         fill_basin_set(&map, &(point.0, point.1 + 1), basin_set);
     }
-}
-
-fn calc_basin_sizes(map: &HeightMap, low_points: &Vec<Coords>) -> Vec<usize> {
-    let mut basin_sizes = low_points
-        .iter()
-        .fold(Vec::new(), |mut basin_sizes, point| {
-            let mut basin_set: HashSet<Coords> = HashSet::new();
-            fill_basin_set(&map, &point, &mut basin_set);
-            basin_sizes.push(basin_set.len());
-            basin_sizes
-        });
-    basin_sizes.sort();
-    basin_sizes
-}
-
-pub fn solve_p2(data: &str) -> usize {
-    let heightmap = parse_input(data);
-    calc_basin_sizes(&heightmap, &find_low_points(&heightmap))
-        .iter()
-        .rev()
-        .take(3)
-        .product()
 }
 
 #[cfg(test)]

@@ -1,3 +1,27 @@
+pub fn solve_p1(data: &str) -> usize {
+    parse_input(data).iter().fold(0, |count, (_, output)| {
+        count
+            + output
+                .iter()
+                .filter(|x| match x.len() {
+                    2 | 3 | 4 | 7 => true,
+                    _ => false,
+                })
+                .count()
+    })
+}
+
+pub fn solve_p2(data: &str) -> i32 {
+    println!("NO IMPLENTED YET!");
+    parse_input(data).iter().fold(0, |output_sum, line_tuple| {
+        output_sum + calc_output_value(&line_tuple.0, &line_tuple.1)
+    })
+}
+
+/*
+ * used by p1 and p2
+ */
+
 fn parse_input(data: &str) -> Vec<(Vec<&str>, Vec<&str>)> {
     data.lines()
         .map(|line| {
@@ -10,17 +34,18 @@ fn parse_input(data: &str) -> Vec<(Vec<&str>, Vec<&str>)> {
         .collect()
 }
 
-pub fn solve_p1(data: &str) -> usize {
-    parse_input(data).iter().fold(0, |count, (_, output)| {
-        count
-            + output
-                .iter()
-                .filter(|x| match x.len() {
-                    2 | 3 | 4 | 7 => true,
-                    _ => false,
-                })
-                .count()
-    })
+/*
+ * used by p2
+ */
+
+fn calc_output_value(signal: &Vec<&str>, _output: &Vec<&str>) -> i32 {
+    let (one, four, seven, eight) = determine_unique_codes(&signal);
+    let segment_a = find_diff(&one, &seven)[0].clone();
+    println!(
+        "1={:?}, 4={:?}, 7={:?}, 8={:?}, a={:?}",
+        one, four, seven, eight, segment_a
+    );
+    1
 }
 
 fn determine_unique_codes(signal: &Vec<&str>) -> (String, String, String, String) {
@@ -45,23 +70,6 @@ fn find_diff(a: &str, b: &str) -> Vec<char> {
                 diffs
             }
         })
-}
-
-fn calc_output_value(signal: &Vec<&str>, _output: &Vec<&str>) -> i32 {
-    let (one, four, seven, eight) = determine_unique_codes(&signal);
-    let segment_a = find_diff(&one, &seven)[0].clone();
-    println!(
-        "1={:?}, 4={:?}, 7={:?}, 8={:?}, a={:?}",
-        one, four, seven, eight, segment_a
-    );
-    1
-}
-
-pub fn solve_p2(data: &str) -> i32 {
-    println!("NO IMPLENTED YET!");
-    parse_input(data).iter().fold(0, |output_sum, line_tuple| {
-        output_sum + calc_output_value(&line_tuple.0, &line_tuple.1)
-    })
 }
 
 #[cfg(test)]

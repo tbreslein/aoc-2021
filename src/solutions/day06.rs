@@ -1,3 +1,11 @@
+pub fn solve_p1(data: &str) -> u64 {
+    solve(data, 80)
+}
+
+pub fn solve_p2(data: &str) -> u64 {
+    solve(data, 256)
+}
+
 fn parse_input(data: &str) -> [u64; 9] {
     data.split_once("\n")
         .unwrap()
@@ -27,14 +35,6 @@ fn solve(data: &str, days: i32) -> u64 {
         })
         .iter()
         .sum()
-}
-
-pub fn solve_p1(data: &str) -> u64 {
-    solve(data, 80)
-}
-
-pub fn solve_p2(data: &str) -> u64 {
-    solve(data, 256)
 }
 
 #[cfg(test)]

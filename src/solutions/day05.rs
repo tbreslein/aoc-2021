@@ -67,33 +67,6 @@ impl Line {
 type Lines = Vec<Line>;
 type Board = Vec<Vec<i32>>;
 
-fn determine_board_size(lines: &Lines) -> (usize, usize) {
-    let mut biggest_x = 0;
-    let mut biggest_y = 0;
-    for line in lines.iter() {
-        biggest_x = cmp::max(biggest_x, cmp::max(line.begin.x, line.end.x));
-        biggest_y = cmp::max(biggest_y, cmp::max(line.begin.y, line.end.y));
-    }
-    (biggest_x as usize, biggest_y as usize)
-}
-
-fn parse_input(data: &str) -> (Board, Lines) {
-    let lines = data.lines().map(|x| Line::new(x)).collect();
-    let board_size = determine_board_size(&lines);
-    let board = vec![vec![0; board_size.0 + 1]; board_size.1 + 1];
-    (board, lines)
-}
-
-fn count_overlaps(board: &Board) -> usize {
-    board.iter().flatten().filter(|x| x > &&1).count()
-}
-
-fn apply_line_to_board(line: &Line, board: &mut Board) {
-    for i in 0..=line.get_length() {
-        board[line.get_y_index(i)][line.get_x_index(i)] += 1;
-    }
-}
-
 pub fn solve_p1(data: &str) -> usize {
     let (mut board, lines) = parse_input(data);
     for line in lines.iter() {
@@ -111,6 +84,33 @@ pub fn solve_p2(data: &str) -> usize {
         apply_line_to_board(&line, &mut board);
     }
     count_overlaps(&board)
+}
+
+fn parse_input(data: &str) -> (Board, Lines) {
+    let lines = data.lines().map(|x| Line::new(x)).collect();
+    let board_size = determine_board_size(&lines);
+    let board = vec![vec![0; board_size.0 + 1]; board_size.1 + 1];
+    (board, lines)
+}
+
+fn determine_board_size(lines: &Lines) -> (usize, usize) {
+    let mut biggest_x = 0;
+    let mut biggest_y = 0;
+    for line in lines.iter() {
+        biggest_x = cmp::max(biggest_x, cmp::max(line.begin.x, line.end.x));
+        biggest_y = cmp::max(biggest_y, cmp::max(line.begin.y, line.end.y));
+    }
+    (biggest_x as usize, biggest_y as usize)
+}
+
+fn apply_line_to_board(line: &Line, board: &mut Board) {
+    for i in 0..=line.get_length() {
+        board[line.get_y_index(i)][line.get_x_index(i)] += 1;
+    }
+}
+
+fn count_overlaps(board: &Board) -> usize {
+    board.iter().flatten().filter(|x| x > &&1).count()
 }
 
 #[cfg(test)]

@@ -9,6 +9,35 @@ enum BoardNumber {
     Marked(Number),
 }
 
+pub fn solve_p1(data: &str) -> u32 {
+    let (drawn_numbers, mut boards) = parse_input(data);
+    for current_number in drawn_numbers {
+        mark_numbers_in_boards(current_number, &mut boards);
+        if let Some(x) = check_if_any_board_won(&boards) {
+            return current_number * x;
+        }
+    }
+    0
+}
+
+pub fn solve_p2(data: &str) -> u32 {
+    let (drawn_numbers, mut boards) = parse_input(data);
+    for current_number in drawn_numbers {
+        mark_numbers_in_boards(current_number, &mut boards);
+        if boards.len() == 1 {
+            if let Some(x) = check_if_specific_board_won(&boards[0]) {
+                return current_number * x;
+            }
+        }
+        remove_winning_boards(&mut boards);
+    }
+    0
+}
+
+/*
+ * used by p1 and p2
+ */
+
 fn parse_input(data: &str) -> (DrawnNumbers, Boards) {
     let mut iter = data.split_at(data.len() - 1).0.split("\n\n"); // remove trailing \n
     let drawn_numbers: DrawnNumbers = iter
@@ -104,19 +133,8 @@ fn check_if_specific_board_won(board: &Board) -> Option<u32> {
     None
 }
 
-pub fn solve_p1(data: &str) -> u32 {
-    let (drawn_numbers, mut boards) = parse_input(data);
-    for current_number in drawn_numbers {
-        mark_numbers_in_boards(current_number, &mut boards);
-        if let Some(x) = check_if_any_board_won(&boards) {
-            return current_number * x;
-        }
-    }
-    0
-}
-
 /*
- * Used by solve_p2 only
+ * used by p2
  */
 
 fn remove_winning_boards(boards: &mut Boards) {
@@ -137,20 +155,6 @@ fn remove_winning_boards(boards: &mut Boards) {
             boards.remove(i);
         }
     }
-}
-
-pub fn solve_p2(data: &str) -> u32 {
-    let (drawn_numbers, mut boards) = parse_input(data);
-    for current_number in drawn_numbers {
-        mark_numbers_in_boards(current_number, &mut boards);
-        if boards.len() == 1 {
-            if let Some(x) = check_if_specific_board_won(&boards[0]) {
-                return current_number * x;
-            }
-        }
-        remove_winning_boards(&mut boards);
-    }
-    0
 }
 
 #[cfg(test)]
