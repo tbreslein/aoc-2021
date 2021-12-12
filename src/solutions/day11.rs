@@ -7,44 +7,6 @@ enum State {
 
 type Board = Vec<Vec<State>>;
 
-fn step1(board: &mut Board, board_length: usize) {
-    for j in 0..board_length {
-        for i in 0..board_length {
-            match board[j][i] {
-                State::Normal(x) => {
-                    board[j][i] = if x >= 9 {
-                        State::Flashing
-                    } else {
-                        State::Normal(x + 1)
-                    }
-                }
-                State::Flashing => {
-                    panic!("Error: there shouldn't have been Flashing left after step 2")
-                }
-                State::Exhausted => {
-                    panic!("Error: there shouldn't have been Exhausted left after step 3")
-                }
-            }
-        }
-    }
-}
-
-fn step2(board: &mut Board, board_length: usize) {
-    while board
-        .iter()
-        .flatten()
-        .any(|x| if let State::Flashing = x { true } else { false })
-    {
-        for j in 0..board_length {
-            for i in 0..board_length {
-                if let State::Flashing = board[j][i] {
-                    light_it_up(board, j, i);
-                }
-            }
-        }
-    }
-}
-
 pub fn solve_p1(data: &str) -> u32 {
     let mut flashes = 0;
     let mut board = parse_input(data);
@@ -117,6 +79,44 @@ fn parse_input(data: &str) -> Vec<Vec<State>> {
                 .collect()
         })
         .collect()
+}
+
+fn step1(board: &mut Board, board_length: usize) {
+    for j in 0..board_length {
+        for i in 0..board_length {
+            match board[j][i] {
+                State::Normal(x) => {
+                    board[j][i] = if x >= 9 {
+                        State::Flashing
+                    } else {
+                        State::Normal(x + 1)
+                    }
+                }
+                State::Flashing => {
+                    panic!("Error: there shouldn't have been Flashing left after step 2")
+                }
+                State::Exhausted => {
+                    panic!("Error: there shouldn't have been Exhausted left after step 3")
+                }
+            }
+        }
+    }
+}
+
+fn step2(board: &mut Board, board_length: usize) {
+    while board
+        .iter()
+        .flatten()
+        .any(|x| if let State::Flashing = x { true } else { false })
+    {
+        for j in 0..board_length {
+            for i in 0..board_length {
+                if let State::Flashing = board[j][i] {
+                    light_it_up(board, j, i);
+                }
+            }
+        }
+    }
 }
 
 fn light_it_up(board: &mut Vec<Vec<State>>, j: usize, i: usize) {
