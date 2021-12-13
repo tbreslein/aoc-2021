@@ -117,6 +117,7 @@ fn explore2(
 }
 
 fn need_to_skip_this_cave(cave: &Cave, path: &Vec<Cave>) -> bool {
+    // you can probably figure out how to do this in one expression...
     // large caves are never skipped
     if cave.name == cave.name.to_uppercase() {
         return false;
