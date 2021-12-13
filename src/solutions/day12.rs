@@ -20,46 +20,31 @@ struct Cave {
     size: Size,
 }
 
+impl Cave {
+    fn new(name: &str) -> Self {
+        Cave {
+            name: name.to_string().clone(),
+            size: from_string(name),
+        }
+    }
+}
+
 type CaveMap = HashMap<String, Vec<Cave>>;
 
-fn explore(
-    map: &CaveMap,
-    start: &Cave,
-    num_viable_paths: &mut u32,
-    small_caves_visited: &mut HashSet<String>,
-) {
-    if start.size == Size::Small {
-        small_caves_visited.insert(start.name.clone());
-    }
-    for path in map.get(&start.name).unwrap() {
-        if path.name == "end" {
-            *num_viable_paths += 1;
-            return;
-        }
-        if small_caves_visited.contains(&path.name) {
-            continue;
-        }
-        explore(map, path, num_viable_paths, small_caves_visited);
-    }
-    if start.size == Size::Small {
-        small_caves_visited.remove(&start.name);
-    }
-}
-
-pub fn solve_p1(data: &str) -> u32 {
+pub fn solve_p1(data: &str) -> usize {
     let map = parse_input(data);
-    let mut num_viable_paths = 0;
-    for key in map.keys() {
-        println!("key = {:?}\npaths = {:?}\n", key, map.get(key).unwrap());
-    }
-    for start_path in map.get("start").unwrap() {
-        explore(&map, start_path, &mut num_viable_paths, &mut HashSet::new());
-    }
-    return num_viable_paths;
+    let mut paths: HashSet<Vec<Cave>> = HashSet::new();
+    let start_cave = Cave::new("start");
+    explore1(&map, &start_cave, &mut paths, &mut vec![start_cave.clone()]);
+    return paths.len();
 }
 
-pub fn solve_p2(_data: &str) -> u64 {
-    1
+pub fn solve_p2(data: &str) -> usize {
+    let map = parse_input(data);
+    let mut paths: HashSet<Vec<Cave>> = HashSet::new();
+    let start_cave = Cave::new("start");
+    explore2(&map, &start_cave, &mut paths, &mut vec![start_cave.clone()]);
+    return paths.len();
 }
 
 fn parse_input(data: &str) -> CaveMap {
@@ -87,6 +72,85 @@ fn insert_caves(map: &mut CaveMap, cave_start_name: String, cave_end: Cave) {
     } else {
         map.insert(cave_start_name, vec![cave_end]);
     }
+}
+
+fn explore1(
+    map: &CaveMap,
+    start: &Cave,
+    paths: &mut HashSet<Vec<Cave>>,
+    current_path: &mut Vec<Cave>,
+) {
+    for path in map.get(&start.name).unwrap() {
+        if path.name == "end" {
+            paths.insert([current_path.clone(), vec![Cave::new("end")]].concat());
+            continue;
+        }
+        if path.size == Size::Small && current_path.contains(&path) {
+            continue;
+        }
+        current_path.push(path.clone());
+        explore1(map, path, paths, current_path);
+        current_path.pop();
+    }
+    return;
+}
+
+fn explore2(
+    map: &CaveMap,
+    start: &Cave,
+    paths: &mut HashSet<Vec<Cave>>,
+    current_path: &mut Vec<Cave>,
+) {
+    for path in map.get(&start.name).unwrap() {
+        if path.name == "end" {
+            paths.insert([current_path.clone(), vec![Cave::new("end")]].concat());
+            continue;
+        }
+        if need_to_skip_this_cave(&path, &current_path) {
+            continue;
+        }
+        current_path.push(path.clone());
+        explore2(map, path, paths, current_path);
+        current_path.pop();
+    }
+    return;
+}
+
+fn need_to_skip_this_cave(cave: &Cave, path: &Vec<Cave>) -> bool {
+    // large caves are never skipped
+    if cave.name == cave.name.to_uppercase() {
+        return false;
+    }
+    // early out when this cave has not been visited yet
+    if !path.contains(&cave) {
+        return false;
+    }
+
+    // "start" and "end" still can only occur once
+    if cave.name == "start".to_string() || cave.name == "end".to_string() {
+        return true;
+    }
+
+    // check if already has a duplicate cave
+    if has_small_duplicate(&path) {
+        return true;
+    }
+    return false;
+}
+
+fn has_small_duplicate(path: &Vec<Cave>) -> bool {
+    for cave in path.iter() {
+        if path
+            .iter()
+            .filter(|y| y.name == y.name.to_lowercase())
+            .filter(|x| x.name == cave.name)
+            .count()
+            >= 2
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 #[cfg(test)]
@@ -146,19 +210,56 @@ start-RW
         assert_eq!(solve_p1(data), 226);
     }
 
-    // #[test]
-    // fn test_p2() {
-    //     let data = r"5483143223
-    // 2745854711
-    // 5264556173
-    // 6141336146
-    // 6357385478
-    // 4167524645
-    // 2176841721
-    // 6882881134
-    // 4846848554
-    // 5283751526
-    // ";
-    //     assert_eq!(solve_p2(data), 195);
-    // }
+    #[test]
+    fn test_p2_1() {
+        let data = r"start-A
+start-b
+A-c
+A-b
+b-d
+A-end
+b-end
+";
+        assert_eq!(solve_p2(data), 36);
+    }
+
+    #[test]
+    fn test_p2_2() {
+        let data = r"dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc
+";
+        assert_eq!(solve_p2(data), 103);
+    }
+
+    #[test]
+    fn test_p2_3() {
+        let data = r"fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW
+";
+        assert_eq!(solve_p2(data), 3509);
+    }
 }
