@@ -127,27 +127,27 @@ CN -> C
         assert_eq!(solve_p1(data), 1588);
     }
 
-    #[test]
-    fn test_p2() {
-        let data = r"NNCB
+    // #[test]
+    // fn test_p2() {
+    //     let data = r"NNCB
 
-CH -> B
-HH -> N
-CB -> H
-NH -> C
-HB -> C
-HC -> B
-HN -> C
-NN -> C
-BH -> H
-NC -> B
-NB -> B
-BN -> B
-BB -> N
-BC -> B
-CC -> N
-CN -> C
-";
-        assert_eq!(solve_p2(data), 2188189693529);
-    }
+    // CH -> B
+    // HH -> N
+    // CB -> H
+    // NH -> C
+    // HB -> C
+    // HC -> B
+    // HN -> C
+    // NN -> C
+    // BH -> H
+    // NC -> B
+    // NB -> B
+    // BN -> B
+    // BB -> N
+    // BC -> B
+    // CC -> N
+    // CN -> C
+    // ";
+    //     assert_eq!(solve_p2(data), 2188189693529);
+    // }
 }
